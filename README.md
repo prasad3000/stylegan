@@ -1,4 +1,4 @@
-# stylegan
+# StyleGAN
 
 ## Reference
 
