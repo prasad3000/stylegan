@@ -146,8 +146,9 @@ class LS(metric_base.MetricBase):
             results += tflib.run(result_expr)
         results = {key: np.concatenate([value[key] for value in results], axis=0) for key in results[0].keys()}
 
-        np.save('results/stylegan-dlatents.npy', results['dlatents'])
-        np.save('results/9_score.npy', results[9][:, 0].reshape((-1,1)))
+        return results
+        #np.save('results/stylegan-dlatents.npy', results['dlatents'])
+        #np.save('results/9_score.npy', results[9][:, 0].reshape((-1,1)))
 
 #       # Calculate conditional entropy for each attribute.
 #         conditional_entropies = defaultdict(list)
