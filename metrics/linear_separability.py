@@ -22,16 +22,16 @@ classifier_urls = [
     'https://drive.google.com/uc?id=1Q5-AI6TwWhCVM7Muu4tBM7rp5nG_gmCX', # celebahq-classifier-00-male.pkl
     'https://drive.google.com/uc?id=1Q5c6HE__ReW2W8qYAXpao68V1ryuisGo', # celebahq-classifier-01-smiling.pkl
     'https://drive.google.com/uc?id=1Q7738mgWTljPOJQrZtSMLxzShEhrvVsU', # celebahq-classifier-02-attractive.pkl
-    'https://drive.google.com/uc?id=1MYbKZ96ZuKCV0mwTBqCJb50aZX39CSUY', # celebahq-classifier-03-wavy-hair.pkl
+    'https://drive.google.com/uc?id=1QBv2Mxe7ZLvOv1YBTLq-T4DS3HjmXV0o', # celebahq-classifier-03-wavy-hair.pkl
     'https://drive.google.com/uc?id=1QIvKTrkYpUrdA45nf7pspwAqXDwWOLhV', # celebahq-classifier-04-young.pkl
     'https://drive.google.com/uc?id=1QJPH5rW7MbIjFUdZT7vRYfyUjNYDl4_L', # celebahq-classifier-05-5-o-clock-shadow.pkl
     'https://drive.google.com/uc?id=1QPZXSYf6cptQnApWS_T83sqFMun3rULY', # celebahq-classifier-06-arched-eyebrows.pkl
     'https://drive.google.com/uc?id=1QPgoAZRqINXk_PFoQ6NwMmiJfxc5d2Pg', # celebahq-classifier-07-bags-under-eyes.pkl
-    'https://drive.google.com/uc?id=1g66O5GIKNOTiB3C2wqEAWEOq0U214wHl', # celebahq-classifier-08-bald.pkl
-    'https://drive.google.com/uc?id=1mYFZAWdloc_QQOk1ldrDfX2tORo1C_CT', # celebahq-classifier-09-bangs.pkl
+    'https://drive.google.com/uc?id=1QQPQgxgI6wrMWNyxFyTLSgMVZmRr1oO7', # celebahq-classifier-08-bald.pkl
+    'https://drive.google.com/uc?id=1QcSphAmV62UrCIqhMGgcIlZfoe8hfWaF', # celebahq-classifier-09-bangs.pkl
     'https://drive.google.com/uc?id=1QdWTVwljClTFrrrcZnPuPOR4mEuz7jGh', # celebahq-classifier-10-big-lips.pkl
     'https://drive.google.com/uc?id=1QgvEWEtr2mS4yj1b_Y3WKe6cLWL3LYmK', # celebahq-classifier-11-big-nose.pkl
-    'https://drive.google.com/uc?id=10aYaHwPjap7-AYTn7bZh2akvbnHj3yT9', # celebahq-classifier-12-black-hair.pkl
+    'https://drive.google.com/uc?id=1QidfMk9FOKgmUUIziTCeo8t-kTGwcT18', # celebahq-classifier-12-black-hair.pkl
     'https://drive.google.com/uc?id=1QthrJt-wY31GPtV8SbnZQZ0_UEdhasHO', # celebahq-classifier-13-blond-hair.pkl
     'https://drive.google.com/uc?id=1QvCAkXxdYT4sIwCzYDnCL9Nb5TDYUxGW', # celebahq-classifier-14-blurry.pkl
     'https://drive.google.com/uc?id=1QvLWuwSuWI9Ln8cpxSGHIciUsnmaw8L0', # celebahq-classifier-15-brown-hair.pkl
@@ -53,7 +53,7 @@ classifier_urls = [
     'https://drive.google.com/uc?id=1S3pQuUz-Jiywq_euhsfezWfGkfzLZ87W', # celebahq-classifier-31-receding-hairline.pkl
     'https://drive.google.com/uc?id=1S6nyIl_SEI3M4l748xEdTV2vymB_-lrY', # celebahq-classifier-32-rosy-cheeks.pkl
     'https://drive.google.com/uc?id=1S9P5WCi3GYIBPVYiPTWygrYIUSIKGxbU', # celebahq-classifier-33-sideburns.pkl
-    'https://drive.google.com/uc?id=1jC0-scYn2kvlD1TMjiLMGO1uXTDzQ2hy', # celebahq-classifier-34-straight-hair.pkl
+    'https://drive.google.com/uc?id=1SANviG-pp08n7AFpE9wrARzozPIlbfCH', # celebahq-classifier-34-straight-hair.pkl
     'https://drive.google.com/uc?id=1SArgyMl6_z7P7coAuArqUC2zbmckecEY', # celebahq-classifier-35-wearing-earrings.pkl
     'https://drive.google.com/uc?id=1SC5JjS5J-J4zXFO9Vk2ZU2DT82TZUza_', # celebahq-classifier-36-wearing-hat.pkl
     'https://drive.google.com/uc?id=1SDAQWz03HGiu0MSOKyn7gvrp3wdIGoj-', # celebahq-classifier-37-wearing-lipstick.pkl
@@ -123,7 +123,7 @@ class LS(metric_base.MetricBase):
                 latents = tf.random_normal([self.minibatch_per_gpu] + Gs_clone.input_shape[1:])
                 dlatents = Gs_clone.components.mapping.get_output_for(latents, None, is_validation=True)
                 images = Gs_clone.components.synthesis.get_output_for(dlatents, is_validation=True, randomize_noise=True)
-        
+
                 # Downsample to 256x256. The attribute classifiers were built for 256x256.
                 if images.shape[2] > 256:
                     factor = images.shape[2] // 256
@@ -139,13 +139,11 @@ class LS(metric_base.MetricBase):
                     result_dict[attrib_idx] = predictions
                 result_expr.append(result_dict)
 
-
         # Sampling loop.
         results = []
         for _ in range(0, self.num_samples, minibatch_size):
             results += tflib.run(result_expr)
         results = {key: np.concatenate([value[key] for value in results], axis=0) for key in results[0].keys()}
-
         return results
         #np.save('results/stylegan-dlatents.npy', results['dlatents'])
         #np.save('results/9_score.npy', results[9][:, 0].reshape((-1,1)))
